@@ -8,6 +8,7 @@ target 'MobileHttpDemo' do
   # Pods for MobileHttpDemo
   pod 'GCDWebServer'
   pod "GCDWebServer/WebDAV"
+  pod "GCDWebServer/WebUploader"
   pod 'Alamofire'
   pod 'SVProgressHUD'
 

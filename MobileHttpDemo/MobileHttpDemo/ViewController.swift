@@ -32,6 +32,7 @@ class ViewController: UIViewController {
   var sendDataUrl:String?
   
   var webServer:GCDWebServer?
+  var webUploader:GCDWebUploader?
   
   
   override func viewDidLoad() {
@@ -40,6 +41,7 @@ class ViewController: UIViewController {
     SVProgressHUD.setMaximumDismissTimeInterval(2)
     AF.sessionConfiguration.timeoutIntervalForRequest = 15
     AF.sessionConfiguration.timeoutIntervalForRequest = 15
+    
   }
   
   @IBAction func createSever(_ sender: Any) {
@@ -71,7 +73,7 @@ class ViewController: UIViewController {
           self.createBtn.setTitle("创建服务器", for: .normal)
           SVProgressHUD.showError(withStatus: "Please check mobile wifi!!!")
         } else {
-          self.httpIPLabel.text = "ip or http: " + String(webServer.serverURL?.absoluteString ?? "")
+          self.httpIPLabel.text = "GCDWebServer: " + String(webServer.serverURL?.absoluteString ?? "")
           self.webServer = webServer
           self.sendBtn.isHidden = true
           self.tipsLabel.isHidden = true
@@ -108,6 +110,9 @@ class ViewController: UIViewController {
         switch response.result {
         case .success(let json):
           self.resultLabel.text = json
+          if json.contains(".jpg") {
+            self.download(json)
+          }
           break
         case .failure(_):
           self.resultLabel.text = "request error"
@@ -119,8 +124,41 @@ class ViewController: UIViewController {
     }
   }
   
+  
+  func download(_ url:String) {
+    let header = self.contentTxt.text!.replacingOccurrences(of: "8080", with: "8081")
+    let URL = header + "download?path=" + url
+    print("URL == ", URL)
+    AF.download(URL).responseData { (response) in
+      switch response.result {
+      case .success(let data):
+        self.photoView.image = UIImage.init(data: data)
+        break
+      case .failure(_):
+        self.resultLabel.text = "request error"
+        self.photoView.backgroundColor = .red
+        break
+      }
+    }
+  }
+  
   @IBAction func choosePhoto(_ sender: Any) {
-    
+    if self.webUploader == nil {
+      //默认上传目录是App的用户文档目录
+      let documentsPath = NSHomeDirectory() + "/Documents/images"
+      let webUploader = GCDWebUploader(uploadDirectory: documentsPath)
+      webUploader.delegate = self
+      webUploader.start(withPort: 8081, bonjourName: "Web Based Uploads")
+      print("服务启动成功，使用你的浏览器访问：\(webUploader.serverURL)")
+      self.httpIPLabel.text = "GCDWebUploader: " + String(webUploader.serverURL?.absoluteString ?? "")
+      self.webUploader = webUploader
+    } else {
+      SVProgressHUD.showError(withStatus: "Created!!!")
+    }
+    let imageController = UIImagePickerController.init()
+    imageController.allowsEditing = true
+    imageController.delegate = self
+    present(imageController, animated: true)
   }
   
   
@@ -154,6 +192,77 @@ extension ViewController:GCDWebServerDelegate {
   
   func webServerDidUpdateNATPortMapping(_ server: GCDWebServer) {
     print("webServerDidUpdateNATPortMapping===========\nport: \(server.port) \nbonjourName: \(server.bonjourName)\n bonjourServerURL: \(server.bonjourServerURL) \nbonjourType: \(server.bonjourType)\npublicServerURL: \(server.publicServerURL)\nserverURL: \(server.serverURL)")
+  }
+  
+}
+
+extension ViewController : GCDWebUploaderDelegate {
+  func webUploader(_ uploader: GCDWebUploader, didDeleteItemAtPath path: String) {
+    print("didDeleteItemAtPath === ", path)
+  }
+  
+  func webUploader(_ uploader: GCDWebUploader, didUploadFileAtPath path: String) {
+    print("didUploadFileAtPath === ", path)
+  }
+  
+  func webUploader(_ uploader: GCDWebUploader, didDownloadFileAtPath path: String) {
+    print("didDownloadFileAtPath === ", path)
+  }
+  
+  func webUploader(_ uploader: GCDWebUploader, didCreateDirectoryAtPath path: String) {
+    print("didCreateDirectoryAtPath === ", path)
+  }
+  
+  func webUploader(_ uploader: GCDWebUploader, didMoveItemFromPath fromPath: String, toPath: String) {
+    print("didMoveItemFromPath === ", fromPath, toPath)
+  }
+}
+
+
+extension ViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+  func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+    dismiss(animated: true)
+  }
+  
+  func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    guard let image = info[.editedImage] as? UIImage else { return }
+    self.photoView.image = image
+    if let jpegData = image.jpegData(compressionQuality: 0.8) {
+      let (url, suc) = ViewController.saveDataWithFolder(source: jpegData as NSData, folder: "images", type: "jpg")
+      if suc {
+        self.contentTxt.text = url
+      }
+    }
+    dismiss(animated: true)
+  }
+  
+  static func saveDataWithFolder(source:NSData, folder:String, type:String) -> (String, Bool) {
+    if source.count <= 0 || folder.count <= 0 {
+      return ("", false)
+    }
+    let formater = DateFormatter()
+    formater.dateFormat = "yyyy-MM-dd-HH-mm-ss-SSS"
+    let fileName = formater.string(from: Date()) + "." + type
+    
+    let paths:Array = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+    guard let documentPath = paths.first else { return ("", false) }
+    let fileManager = FileManager.default
+    let fileDocPath = URL(fileURLWithPath: documentPath).appendingPathComponent(folder)
+    let isExit = fileManager.fileExists(atPath: fileDocPath.path)
+    if !isExit {
+      do {
+        try fileManager.createDirectory(at: fileDocPath, withIntermediateDirectories: true, attributes: nil)
+      } catch {
+        print("file path crate fail : \(fileDocPath)")
+        return ("", false)
+      }
+    }
+    let filePath = fileDocPath.appendingPathComponent(fileName)
+    let result = source.write(to: filePath, atomically: true)
+    if result {
+      return (filePath.lastPathComponent, true)
+    }
+    return ("", false)
   }
   
 }
