@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F1BBB7B24D330E4004D14CF /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 2F1BBB7A24D330E4004D14CF /* README.md */; };
 		4C62EBAB24D2A0FA0057A631 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C62EBAA24D2A0FA0057A631 /* AppDelegate.swift */; };
 		4C62EBAF24D2A0FA0057A631 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C62EBAE24D2A0FA0057A631 /* ViewController.swift */; };
 		4C62EBB224D2A0FA0057A631 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C62EBB024D2A0FA0057A631 /* Main.storyboard */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2F1BBB7A24D330E4004D14CF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		4C62EBA724D2A0FA0057A631 /* MobileHttpDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MobileHttpDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C62EBAA24D2A0FA0057A631 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4C62EBAE24D2A0FA0057A631 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -43,6 +45,7 @@
 		4C62EB9E24D2A0FA0057A631 = {
 			isa = PBXGroup;
 			children = (
+				2F1BBB7A24D330E4004D14CF /* README.md */,
 				4C62EBA924D2A0FA0057A631 /* MobileHttpDemo */,
 				4C62EBA824D2A0FA0057A631 /* Products */,
 				53E22D0B699529C254383FA3 /* Pods */,
@@ -150,6 +153,7 @@
 			files = (
 				4C62EBB724D2A0FC0057A631 /* LaunchScreen.storyboard in Resources */,
 				4C62EBB424D2A0FC0057A631 /* Assets.xcassets in Resources */,
+				2F1BBB7B24D330E4004D14CF /* README.md in Resources */,
 				4C62EBB224D2A0FA0057A631 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

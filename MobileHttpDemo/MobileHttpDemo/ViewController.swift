@@ -48,7 +48,7 @@ class ViewController: UIViewController {
     self.createBtn.isSelected = !self.createBtn.isSelected
     view.endEditing(true)
     if self.createBtn.isSelected {
-      self.createBtn.setTitle("关闭服务器", for: .normal)
+      self.createBtn.setTitle("Close Sever", for: .normal)
       if self.webServer == nil {
         let webServer = GCDWebServer()
         webServer.delegate = self
@@ -66,11 +66,11 @@ class ViewController: UIViewController {
         })
         
         webServer.start(withPort: 8080, bonjourName: "GCD Web Server")
-        print("The service started successfully: \(webServer.serverURL)")
+        print("The GCDWebServer started successfully: \(webServer.serverURL)")
         if webServer.serverURL == nil {
           webServer.stop()
           self.createBtn.isSelected = false
-          self.createBtn.setTitle("创建服务器", for: .normal)
+          self.createBtn.setTitle("Create Sever", for: .normal)
           SVProgressHUD.showError(withStatus: "Please check mobile wifi!!!")
         } else {
           self.httpIPLabel.text = "GCDWebServer: " + String(webServer.serverURL?.absoluteString ?? "")
@@ -85,7 +85,7 @@ class ViewController: UIViewController {
         SVProgressHUD.showError(withStatus: "Created!!!")
       }
     } else {
-      self.createBtn.setTitle("创建服务器", for: .normal)
+      self.createBtn.setTitle("Create Sever", for: .normal)
       if self.webServer == nil {
         SVProgressHUD.showError(withStatus: "Closed!!!")
       } else {
@@ -149,7 +149,7 @@ class ViewController: UIViewController {
       let webUploader = GCDWebUploader(uploadDirectory: documentsPath)
       webUploader.delegate = self
       webUploader.start(withPort: 8081, bonjourName: "Web Based Uploads")
-      print("服务启动成功，使用你的浏览器访问：\(webUploader.serverURL)")
+      print("The GCDWebUploader started successfully：\(webUploader.serverURL)")
       self.httpIPLabel.text = "GCDWebUploader: " + String(webUploader.serverURL?.absoluteString ?? "")
       self.webUploader = webUploader
     } else {
