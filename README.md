@@ -2,4 +2,4 @@
 
 
 ### View
-![](https://github.com/HatsuneMikuV/MobileHttpDemo/blob/master/test.MP4)
+![](https://github.com/HatsuneMikuV/MobileHttpDemo/blob/master/test.gif)
